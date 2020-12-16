@@ -3,12 +3,14 @@ WORKDIR /app
 EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
-WORKDIR /src
-COPY ["Samples.WeatherForecast.Api.csproj", "./"]
-RUN dotnet restore "Samples.WeatherForecast.Api.csproj"
+WORKDIR /app
 COPY . .
-WORKDIR "/src/."
-RUN dotnet build "Samples.WeatherForecast.Api.csproj" -c Release -o /app/build
+
+WORKDIR /app/src/Samples.WeatherForecast.Api
+
+RUN dotnet restore "Samples.WeatherForecast.Api.csproj"
+
+RUN dotnet build "Samples.WeatherForecast.Api.csproj" -c Release -o /app/build --no-restore
 
 FROM build AS publish
 RUN dotnet publish "Samples.WeatherForecast.Api.csproj" -c Release -o /app/publish
